@@ -5,15 +5,15 @@ from src.visualizer import LIPMVisualizer
 from src.observers import StateLoggerObserver, FallCounterObserver
 
 def run_demo():
-    # 1. Configuration
+    # Configuration
     config = {
         "g": 9.81,
         "h": 0.6, #leg height         
         "dt": 0.01, 
-        "dynamics_type": "continuous", # or "discreet"
-        "policy_type": "least_square", # or "lqr"
-        "u_min": -0.3, #min length of step
-        "u_max": 0.3, #max length of step
+        "dynamics_type": "discrete", # "discrete" or "continuous"
+        "policy_type": "capture_point", # "capture_point" or "least_square"
+        "u_min": -1.0, #min length of step
+        "u_max": 1.0, #max length of step
         "push_prob": 0.1 #probability of getting pushed each step
     }
 
@@ -33,7 +33,7 @@ def run_demo():
     sim.x = np.array([0.1, 0.0])
 
     print("Starting Animation...")
-    viz = LIPMVisualizer(sim, config)
+    viz = LIPMVisualizer(sim, config, referee=referee)
     viz.show() 
 
     print("\n" + "="*40)
