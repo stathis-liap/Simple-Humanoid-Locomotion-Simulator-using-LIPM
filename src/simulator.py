@@ -19,19 +19,19 @@ class BaseSimulator:
         self.observers.append(observer)
 
     def step(self):
-        # 1. Compute Control (Strategy)
+        # Compute Control (Strategy)
         u = self.policy.compute_control(self.x, self.t)
         
-        # 2. Hook: Constraints (can be overridden)
+        # Constraints 
         u = self._enforce_constraints(u)
 
-        # 3. Propagate Dynamics (Strategy)
+        # Propagate Dynamics (Strategy)
         x_next = self.dynamics.propagate(self.x, u, self.dt)
         
-        # 4. Hook: Disturbances
+        # Disturbances
         x_next = self._apply_disturbances(x_next)
 
-        # 5. Notify Observers (Observer)
+        # Notify Observers
         self._notify_observers(self.x, u, x_next)
 
         self.x = x_next
@@ -46,14 +46,10 @@ class BaseSimulator:
         for obs in self.observers:
             obs.update(data)
 
-    # Hooks
     def _enforce_constraints(self, u): return u
     def _apply_disturbances(self, x): return x
 
 class ScenarioSimulator(BaseSimulator):
-    """
-    Concrete implementation adding constraints and random pushes.
-    """
     def __init__(self, dynamics, policy, dt, u_min, u_max, push_prob=0.0):
         super().__init__(dynamics, policy, dt)
         self.u_min = u_min

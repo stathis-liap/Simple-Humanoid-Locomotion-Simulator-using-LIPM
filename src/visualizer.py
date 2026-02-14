@@ -3,16 +3,14 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 class LIPMVisualizer:
-    # 1. Update __init__ to accept the referee
     def __init__(self, simulator, config, referee=None):
         self.sim = simulator
         self.config = config
         self.h = config["h"]
         self.dt = config["dt"]
-        self.referee = referee  # Store the referee
+        self.referee = referee  
         
         self.history_len = 200
-        # ... (rest of buffers and setup is identical to your code) ...
         self.t_data = np.zeros(self.history_len)
         self.p_data = np.zeros(self.history_len)
         self.u_data = np.zeros(self.history_len)
@@ -21,11 +19,10 @@ class LIPMVisualizer:
         self.fig = plt.figure(figsize=(10, 8))
         self.ax_anim = self.fig.add_subplot(2, 1, 1)
         self.ax_plot = self.fig.add_subplot(2, 1, 2)
-        # ... (setup axes/lines same as before) ...
-        self._setup_plots() # Helper to keep code clean
+        self._setup_plots() 
 
+    #helper
     def _setup_plots(self):
-        # (Copy your existing plot setup code here)
         self.ax_anim.set_xlim(-2.0, 2.0)
         self.ax_anim.set_ylim(-0.1, self.h + 0.5)
         self.ax_anim.set_aspect('equal')
@@ -53,28 +50,34 @@ class LIPMVisualizer:
         return self.leg_line, self.com_point, self.foot_point, self.cp_point
 
     def update(self, frame):
-        # 1. Step the Physics
+        # Step 
         self.sim.step()
         
-        # 2. Check the Referee (The "Game Over" Condition)
+        # 2. Check the Referee for GAME OVER
         if self.referee and self.referee.just_fell:
             print(f"-> Referee signaled FALL at t={self.sim.t:.2f}s! Resetting simulation...")
             
-            # --- RESET LOGIC ---
-            # A. Reset Physics State
+            # Reset Physics State
             self.sim.x = np.zeros(2)  # Back to [0, 0]
             self.sim.t = 0.0          # Reset clock
             
-            # B. Reset Visualization Buffers (Clear the history)
+            # Reset Visualization Buffers (Clear the history)
             self.t_data[:] = 0
             self.p_data[:] = 0
             self.u_data[:] = 0
             self.xi_data[:] = 0
-            
-            # C. Return empty artists to "blink" the screen
-            return self.leg_line, self.com_point, self.foot_point
 
-        # 3. Normal Visualization Logic (Extract State)
+            # make the leg red and thick for one frame
+            self.leg_line.set_color('red')
+            self.leg_line.set_linewidth(10)
+
+            return self.leg_line, self.com_point, self.foot_point
+        else:
+            # Normal color
+            self.leg_line.set_color('black')
+            self.leg_line.set_linewidth(4)
+
+        # Normal Visualization Logic 
         t = self.sim.t
         p = self.sim.x[0]
         v = self.sim.x[1]
@@ -87,13 +90,13 @@ class LIPMVisualizer:
         omega = np.sqrt(9.81 / self.h)
         xi = p + v / omega
 
-        # 4. Update Animation (Stick Figure)
+        # Update Animation (Stick Figure)
         self.leg_line.set_data([u, p], [0, self.h])
         self.com_point.set_data([p], [self.h])
         self.foot_point.set_data([u], [0])
         self.cp_point.set_data([xi], [0]) 
 
-        # 5. Update Scrolling Plots
+        # Update Scrolling Plots
         self.t_data[:-1] = self.t_data[1:]
         self.p_data[:-1] = self.p_data[1:]
         self.u_data[:-1] = self.u_data[1:]

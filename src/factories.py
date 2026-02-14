@@ -6,7 +6,7 @@ import numpy as np
 class SimulatorFactory:
     @staticmethod
     def create(config: dict):
-        # 1. Create Dynamics
+        # Create Dynamics
         omega = np.sqrt(config["g"] / config["h"])
         dt = config["dt"]
         
@@ -17,7 +17,7 @@ class SimulatorFactory:
         else:
             raise ValueError("Unknown dynamics type")
             
-        # 2. Create Policy
+        # Create Policy
         if config["policy_type"] == "capture_point":
             policy = CapturePointPolicy(omega, config["u_min"], config["u_max"])
         elif config["policy_type"] == "least_square":
@@ -26,7 +26,7 @@ class SimulatorFactory:
         else:
             raise ValueError("Unknown policy")
 
-        # 3. Create Simulator
+        # Create Simulator
         sim = ScenarioSimulator(
             dynamics, 
             policy, 

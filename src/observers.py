@@ -33,17 +33,15 @@ class FallCounterObserver(Observer):
         Checks if leg length exceeds safe limits.
         data: {'t': t, 'x': [p, v], 'u': u, 'x_next': ...}
         """
-        # 1. Reset flag (we only want to signal a fall ONCE per step)
+        # Reset flag
         self.just_fell = False
         
         p = data["x"][0]
         u = data["u"]
         
-        # 2. The Math: Calculate physical leg length
-        # leg_length^2 = (horizontal_dist)^2 + (height)^2
+        # Calculate physical leg length
         leg_length = np.sqrt((p - u)**2 + self.h**2)
         
-        # 3. The Judgment
         if leg_length > (self.h * self.limit_factor):
             self.falls += 1
             self.just_fell = True
