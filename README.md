@@ -7,6 +7,9 @@
 
 This repository contains a modular, 2D sagittal-plane locomotion simulation engine for a simplified humanoid model. The primary goal of this project is to explore the theoretical foundations of humanoid balance (using the Linear Inverted Pendulum Model) while strictly enforcing professional software architecture through classic design patterns.
 
+<img width="903" height="713" alt="eic_lipm" src="https://github.com/user-attachments/assets/6e4006b6-8d53-4e2e-ab7a-05fc0ab5c713" />
+
+
 **🧠 Theoretical Foundations**
 
 To make a robot walk, we must first understand how to keep it from falling over. This project implements the math required to predict falls and safely place the robot's feet to maintain balance.
