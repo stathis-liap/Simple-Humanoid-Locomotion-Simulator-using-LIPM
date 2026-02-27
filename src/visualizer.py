@@ -116,6 +116,21 @@ class LIPMVisualizer:
         # Dynamically adjust X-axis to scroll (locked to 0 at start)
         self.ax_plot.set_xlim(max(0, t - 2.0), max(2.0, t + 0.1))
 
+        # Dynamically adjust Y-axis
+        # Find the min and max of the data currently in the buffer
+        y_min = min(np.min(self.p_data), np.min(self.u_data), np.min(self.xi_data))
+        y_max = max(np.max(self.p_data), np.max(self.u_data), np.max(self.xi_data))
+        
+        # Calculate the middle point
+        mid_y = (y_max + y_min) / 2.0
+        
+        # Ensure the window never zooms in *too* much (keep at least a +/- 1.0 spread)
+        # Add a 0.2 margin so lines don't touch the exact top/bottom of the plot
+        half_range = max(1.0, (y_max - y_min) / 2.0 + 0.2)
+        
+        # Apply the new sliding vertical window
+        self.ax_plot.set_ylim(mid_y - half_range, mid_y + half_range)
+
         return self.leg_line, self.com_point, self.foot_point
 
     def show(self):
