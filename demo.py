@@ -8,13 +8,15 @@ def run_demo():
     # Configuration
     config = {
         "g": 9.81,
-        "h": 0.6, #leg height         
+        "h": 0.9, #leg height         
         "dt": 0.01, 
-        "dynamics_type": "discrete", # "discrete" or "continuous"
+        "dynamics_type": "continuous", # "discrete" or "continuous"
         "policy_type": "capture_point", # "capture_point" or "least_square"
-        "u_min": -1.0, #min length of step
-        "u_max": 1.0, #max length of step
-        "push_prob": 0.1 #probability of getting pushed each step
+        "u_min": -0.3, #min length of step
+        "u_max": 0.3, #max length of step
+        "push_prob": 0.0, #probability of getting pushed each step
+        "v_walk": 1.0, #w alking speed
+        "step_time": 0.3 #the time allowed between each step
     }
 
     print("Initializing Simulation...")
