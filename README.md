@@ -1,8 +1,6 @@
 ***Humanoid Locomotion Simulator (LIPM + Capture Point)***
 
-Author: Stathis Liapodimitris
-
-Affiliation: Embodied Intelligence Robotics Club (Christmas Project)
+**Embodied Intelligence Robotics Club (Christmas Project)**
 
 
 **📌 Overview**
