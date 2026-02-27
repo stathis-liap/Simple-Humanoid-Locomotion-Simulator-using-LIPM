@@ -50,18 +50,39 @@ class BaseSimulator:
     def _apply_disturbances(self, x): return x
 
 class ScenarioSimulator(BaseSimulator):
-    def __init__(self, dynamics, policy, dt, u_min, u_max, push_prob=0.0):
+    def __init__(self, dynamics, policy, dt, u_min, u_max, push_prob=0.0, step_time = 0.3):
         super().__init__(dynamics, policy, dt)
         self.u_min = u_min
         self.u_max = u_max
         self.push_prob = push_prob
+        self.step_time = step_time
         self.rng = np.random.default_rng(42)
 
+        self.time_since_last_step = 0.0
+        self.current_u = 0.0 # Where the foot is currently planted
+
+
     def _enforce_constraints(self, u):
-        return float(np.clip(u, self.u_min, self.u_max))
+        """
+        handles reach limits and step timing.
+        """
+        p = self.x[0] # Current body position
+
+        # check if it can step
+        if self.time_since_last_step >= self.step_time or self.t == 0.0:
+            # accept the new u and clip it to leg limits
+            self.current_u = float(np.clip(u, p + self.u_min, p + self.u_max))
+            self.time_since_last_step = 0.0
+        else:
+            # self.current_u doesnt change (the foot is planted)
+            pass 
+
+        self.time_since_last_step += self.dt
+
+        return self.current_u
 
     def _apply_disturbances(self, x):
-        # Random velocity kick
+        # random velocity kick
         if self.rng.random() < self.push_prob:
             kick = self.rng.uniform(-0.5, 0.5)
             x[1] += kick

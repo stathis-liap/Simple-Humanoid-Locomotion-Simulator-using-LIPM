@@ -23,11 +23,11 @@ class LIPMVisualizer:
 
     #helper
     def _setup_plots(self):
-        self.ax_anim.set_xlim(-2.0, 2.0)
+        self.ax_anim.set_xlim(-20.0, 20.0)
         self.ax_anim.set_ylim(-0.1, self.h + 0.5)
         self.ax_anim.set_aspect('equal')
         self.ax_anim.grid(True)
-        self.ground_line, = self.ax_anim.plot([-2, 2], [0, 0], 'k-', lw=2)
+        self.ground_line, = self.ax_anim.plot([-20, 20], [0, 0], 'k-', lw=2)
         self.leg_line, = self.ax_anim.plot([], [], 'k-', lw=4, label='Leg')
         self.com_point, = self.ax_anim.plot([], [], 'bo', ms=10, label='COM')
         self.foot_point, = self.ax_anim.plot([], [], 'rs', ms=10, label='Foot')
@@ -53,7 +53,7 @@ class LIPMVisualizer:
         # Step 
         self.sim.step()
         
-        # 2. Check the Referee for GAME OVER
+        # Check the Referee for GAME OVER
         if self.referee and self.referee.just_fell:
             print(f"-> Referee signaled FALL at t={self.sim.t:.2f}s! Resetting simulation...")
             
@@ -82,9 +82,11 @@ class LIPMVisualizer:
         p = self.sim.x[0]
         v = self.sim.x[1]
         
-        # Re-compute control 'u' with constraints for visualization
-        raw_u = self.sim.policy.compute_control(self.sim.x, t)
-        u = np.clip(raw_u, self.sim.u_min, self.sim.u_max)
+        #move the camera for tracking
+        self.ax_anim.set_xlim(p - 2.0, p + 2.0)
+        
+        # compute the (relative) u
+        u = self.sim.current_u
         
         # Calculate Capture Point for viz
         omega = np.sqrt(9.81 / self.h)
